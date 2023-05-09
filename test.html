@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>FreightWise Programming Test</title>
+
+    <script>
+        'use strict';
+
+        class Test {
+            constructor() {
+                // Make sure to access the first element, because there is only one 'test-results' in this case..
+                this.testResults = document.getElementsByClassName('test-results')[0];
+                // Add to handle input boxes for City, State, Country
+                this.cityInput = document.getElementById('city');
+                this.stateInput = document.getElementById('state');
+                this.countryInput = document.getElementById('country');
+            }
+
+            async run() {
+                console.log(new Date().toISOString(), '[Test]', 'Running the test');
+                // Using async/await
+                try {
+                    // Create the API call to get current weather
+                    const apiKey = '57179c18ed333e3a9007f98db56deb44';
+                    const city = this.cityInput.value;
+                    const state = this.stateInput.value;
+                    const country = this.countryInput.value;
+                    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city},${state},${country}&appid=${apiKey}&units=imperial`;
+
+                    const response = await axios.get(url);
+
+                    // Write results to DOM and format
+                    this.setResults(response.data);
+                } catch (error) {
+                    // Write error to DOM and format
+                    this.setError(error.message);
+                }
+            }
+
+            setError(message) {
+                console.log(new Date().toISOString(), '[Test]', 'Test failed.');
+
+                // Handle error
+                const formattedError = `
+                      <h2>Error</h2>
+                      <p>There was an error getting the weather data. Please try again later.</p>
+                      <p>Error message: ${message}</p>
+                    `;
+
+                this.testResults.innerHTML = (formattedError || '').toString();
+            }
+
+            setResults(results) {
+                console.log(new Date().toISOString(), '[Test]', 'Test successful.');
+
+                // Get data from response
+                const weather = results.weather[0].main;
+                const temp = results.main.temp;
+                const feelsLike = results.main.feels_like;
+
+                // Format and display current weather
+                const formattedWeather = `
+                      <h2>Current Weather in ${results.name}</h2>
+                      <p><strong>Weather:</strong> ${weather}</p>
+                      <p><strong>Temperature:</strong> ${temp} &deg;F</p>
+                      <p><strong>Feels Like:</strong> ${feelsLike} &deg;F</p>
+                    `;
+
+                this.testResults.innerHTML = (formattedWeather || '').toString();
+            }
+        }
+    </script>
+
+    <style>
+        .button-container {
+            text-align: center;
+        }
+
+            .button-container > button {
+                margin: 0;
+                padding: 10px 18px;
+                color: white;
+                background-color: #008000;
+                border: none;
+                border-radius: 3px;
+                transition: all 200ms ease-in-out;
+                font-size: 14px;
+            }
+
+                .button-container > button:hover {
+                    background-color: #00A000;
+                }
+
+                .button-container > button:active {
+                    background-color: #006000;
+                }
+
+        .test-results {
+            text-align: center;
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 25px;
+            margin-bottom: 25px;
+        }
+
+            .input-container label {
+                font-weight: bold;
+            }
+
+            .input-container input {
+            margin: 10px;
+            padding: 5px;
+            width: 200px;
+            font-size: 16px;
+            color: black;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: white;
+        }
+    </style>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div class="test-results"></div>
+
+    <div class="input-container">
+        <h2>Enter the location you would like to look up:</h2>
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" required>
+      
+        <label for="state">State:</label>
+        <input type="text" id="state" name="state" required>
+      
+        <label for="country">Country:</label>
+        <input type="text" id="country" name="country" required>
+      </div>
+
+    <div class="button-container"></div>
+
+    <script>
+        'use strict';
+
+        /**
+         * Creates a button for kicking off the test and adds it to the DOM.
+         *
+         * @param {HTMLElement} context  the parent element to add the button to
+         * @param {Test}        test     the test to be executed
+         * @returns {HTMLElement} the button added to the test
+         */
+        function addButtonForTest(context, test) {
+            let testButton = document.createElement('button');
+
+            testButton.type = 'button';
+            // Changed to allow for weather from any place
+            testButton.innerText = 'Get the Weather';
+            testButton.onclick = () => test.run();
+
+            context.appendChild(testButton);
+
+            return testButton;
+        }
+
+        // Create the Test and add a button to the UI for running the test
+        const test = new Test();
+        const buttonContainer = document.getElementsByClassName('button-container')[0];
+
+        addButtonForTest(buttonContainer, test);
+    </script>
+</body>
+</html>
