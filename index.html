@@ -164,32 +164,25 @@
             testButton.type = 'button';
             // Changed to allow for weather from any place
             testButton.innerText = 'Get the Weather';
-            testButton.onclick = () => test.run();
+            
+            testButton.addEventListener('click', function() {
+                // Perform validation of all entry fields
+                var city = document.getElementById("city").value;
+                var state = document.getElementById("state").value;
+                var country = document.getElementById("country").value;
+
+                if (city.trim() === "" || state.trim() === "" || country.trim() === "") {
+                  alert("Please fill in all the required fields.");
+                  return;
+                }
+                // If validation passes, execute the test
+                test.run();
+            });
 
             context.appendChild(testButton);
 
             return testButton;
         }
-
-        // Create the Test and add a button to the UI for running the test
-        const test = new Test();
-        const buttonContainer = document.getElementsByClassName('button-container')[0];
-
-        addButtonForTest(buttonContainer, test);
-
-        document.getElementById("location-form").addEventListener("submit", function(event) {
-        event.preventDefault(); // Prevents the default form submission behavior
-
-        // Perform validation of all entry fields
-        var city = document.getElementById("city").value;
-        var state = document.getElementById("state").value;
-        var country = document.getElementById("country").value;
-
-        if (city.trim() === "" || state.trim() === "" || country.trim() === "") {
-              alert("Please fill in all the required fields.");
-              return;
-            }
-        });
     </script>
 </body>
 </html>
