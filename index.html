@@ -183,6 +183,12 @@
 
             return testButton;
         }
+        
+        // Create the Test and add a button to the UI for running the test
+        const test = new Test();
+        const buttonContainer = document.getElementsByClassName('button-container')[0];
+
+        addButtonForTest(buttonContainer, test);
     </script>
 </body>
 </html>
